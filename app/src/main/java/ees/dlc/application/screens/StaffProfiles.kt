@@ -38,8 +38,8 @@ class StaffProfiles : ComponentActivity() {
         val id: Int,
         val username: String,
         val name: String,
-        val profile_picture: String,
-        val booking_link: String,
+        val profilePicture: String,
+        val bookingLink: String,
         val skills: List<String>,
         val modules: List<String>
     )
@@ -116,7 +116,8 @@ class StaffProfiles : ComponentActivity() {
                                 .fillMaxWidth()
                         ) {
                             AsyncImage(
-                                model = "http://192.168.1.36:5000/static/images/profile_pictures/" + item.profile_picture,
+                                model = "http://192.168.1.36:5000/static/images/profile_pictures/"
+                                        + item.profilePicture,
                                 contentDescription = "${item.name}'s profile picture",
                                 modifier = Modifier
                                     .size(64.dp)
@@ -128,8 +129,8 @@ class StaffProfiles : ComponentActivity() {
                             ) {
                                 Text(text = "Username: ${item.username}")
                                 Text(text = "Name: ${item.name}")
-                                if(item.booking_link != null) {
-                                    Text(text = "Booking Link: ${item.booking_link}")
+                                if(item.bookingLink != null) {
+                                    Text(text = "Booking Link: ${item.bookingLink}")
                                 }
                                 if(item.skills != null) {
                                     val tmpSkills: String =
