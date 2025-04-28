@@ -1,6 +1,7 @@
 package ees.dlc.application
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
@@ -16,6 +17,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavController
 
 @Composable
@@ -33,6 +35,11 @@ fun NavigationBar(
             route = Screen.Home.rout
         ),
         NavigationItem(
+            title = "Timetable",
+            icon = Icons.Default.CalendarMonth,
+            route = Screen.Timetable.rout
+        ),
+        NavigationItem(
             title = "Staff Profiles",
             icon = Icons.Default.Person,
             route = Screen.StaffProfiles.rout
@@ -40,7 +47,7 @@ fun NavigationBar(
     )
 
     NavigationBar(
-        containerColor = Color.White
+        containerColor = colorResource(R.color.cov_blue)
     ) {
         navigationItems.forEachIndexed { index, item ->
             NavigationBarItem(
@@ -56,13 +63,13 @@ fun NavigationBar(
                     Text(
                         item.title,
                         color = if (index == selectedNavigationIndex.intValue)
-                            Color.Black
-                        else Color.Gray
+                            Color.White
+                        else Color.White
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.surface,
-                    indicatorColor = MaterialTheme.colorScheme.primary
+                    selectedIconColor = colorResource(R.color.white),
+                    indicatorColor = colorResource(R.color.cov_blue_highlight)
                 )
 
             )

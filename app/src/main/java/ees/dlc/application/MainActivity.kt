@@ -18,6 +18,7 @@ import ees.dlc.application.ui.theme.DLCTheme
 import ees.dlc.application.Screen
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import ees.dlc.application.screens.TimetableScreen
 
 
 class MainActivity : ComponentActivity() {
@@ -47,6 +48,9 @@ fun MainScreen() {
             navController.createGraph(startDestination = Screen.Home.rout) {
                 composable(route = Screen.Home.rout) {
                     HomeScreen()
+                }
+                composable(route = Screen.Timetable.rout) {
+                    TimetableScreen()
                 }
                 composable(route = Screen.StaffProfiles.rout) {
                     StaffProfilesScreen()
