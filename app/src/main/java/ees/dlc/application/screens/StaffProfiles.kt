@@ -29,6 +29,9 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.stream.Collectors
+
+
 
 class StaffProfiles : ComponentActivity() {
     data class UserItem(
@@ -36,7 +39,9 @@ class StaffProfiles : ComponentActivity() {
         val username: String,
         val name: String,
         val profile_picture: String,
-        val booking_link: String?
+        val booking_link: String,
+        val skills: List<String>,
+        val modules: List<String>
     )
 
     private inline fun <reified T> parseJson(text: String): T =
@@ -125,6 +130,16 @@ class StaffProfiles : ComponentActivity() {
                                 Text(text = "Name: ${item.name}")
                                 if(item.booking_link != null) {
                                     Text(text = "Booking Link: ${item.booking_link}")
+                                }
+                                if(item.skills != null) {
+                                    val tmpSkills: String =
+                                        item.skills.stream().collect(Collectors.joining(", "))
+                                    Text(text = "Skills: $tmpSkills")
+                                }
+                                if(item.modules != null) {
+                                    val tmpModules: String =
+                                        item.modules.stream().collect(Collectors.joining(", "))
+                                    Text(text = "Modules: $tmpModules")
                                 }
                             }
                         }
