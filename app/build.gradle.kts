@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.runtime.rxjava2)
+    implementation(libs.androidx.navigation.compose)
     implementation (libs.coil.compose)
 
     implementation(libs.google.gson)
