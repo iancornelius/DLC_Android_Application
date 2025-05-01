@@ -1,17 +1,14 @@
 package ees.dlc.application.screens
 
-import android.annotation.SuppressLint
-import kotlinx.coroutines.async
-import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,30 +17,33 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ees.dlc.application.API
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
+import java.util.Locale
 
-suspend fun GetSemester(): Int {
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    val todays_date = LocalDateTime.now()
+suspend fun getSemester(): Int {
+    // val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    // val current_date = LocalDateTime.now()
     val apiUrl = "http://192.168.1.36:5000/api/current-semester/20/01/2025"
     return withContext(Dispatchers.IO) {
         val response = JSONObject(API.CallApi(apiUrl, "GET"))
         response.getInt("current-semester")
     }
-
 }
 
-suspend fun GetWeek(): Int {
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    val todays_date = LocalDateTime.now()
+suspend fun getWeek(): Int {
+//    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+//    val current_date = LocalDateTime.now()
     val apiUrl = "http://192.168.1.36:5000/api/current-week/20/01/2025"
     return withContext(Dispatchers.IO) {
         val response = JSONObject(API.CallApi(apiUrl, "GET"))
@@ -52,68 +52,104 @@ suspend fun GetWeek(): Int {
 }
 
 @Composable
-fun RowScope.TableCell(
-    text: String,
-    weight: Float
-) {
-    Text(
-        text = text,
-        Modifier
-            .border(1.dp, Color.Black)
-            .weight(weight)
-            .padding(8.dp)
-    )
-}
-
-@Composable
-fun TimetableScreen(){
-    val week = remember { mutableIntStateOf(-1) }
+fun TimetableScreen() {
     val semester = remember { mutableIntStateOf(-1) }
+    val week = remember { mutableIntStateOf(-1) }
+    val currentDay = LocalDate.now().dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
     val timetableData = remember { mutableStateOf<JSONObject?>(null) }
 
     LaunchedEffect(Unit) {
-        val weekDeferred = async { GetWeek() }
-        val semesterDeferred = async { GetSemester() }
+        coroutineScope {
+            val weekDeferred = async { getWeek() }
+            val semesterDeferred = async { getSemester() }
 
-        week.intValue = weekDeferred.await()
-        semester.intValue = semesterDeferred.await()
+            week.intValue = weekDeferred.await()
+            semester.intValue = semesterDeferred.await()
+        }
     }
 
     LaunchedEffect(week.intValue, semester.intValue) {
         if (week.intValue != -1 && semester.intValue != -1) {
-            val apiUrl = "http://192.168.1.36:5000/timetable/${semester.intValue}/${week.intValue}"
+//            val apiUrl = "http://192.168.1.36:5000/api/timetable/${semester.intValue}/${week.intValue}/${currentDay}"
+            val apiUrl = "http://192.168.1.36:5000/api/timetable/1/6/${currentDay.lowercase()}"
             val response = withContext(Dispatchers.IO) {
                 JSONObject(API.CallApi(apiUrl, "GET"))
             }
-            Log.d("TimeTable-API", response.toString())
             timetableData.value = response
         }
     }
 
-    if (week.intValue == -1 || semester.intValue == -1) {
+    if (week.intValue == -1 || semester.intValue == -1 || timetableData.value == null) {
         Text("Loading...")
         return
     }
 
-    val tableData = (1..100).map { it to "Item $it" }
-    val column1Weight = .3f
-    val column2Weight = .7f
+    val mondaySchedule = remember(timetableData) {
+        parseDaySchedule(timetableData.value!!, currentDay.lowercase())
+    }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        item {
-            Row(Modifier.background(Color.Gray)) {
-                TableCell("Column 1", column1Weight)
-                TableCell("Column 2", column2Weight)
-            }
+    SingleDayTimetable(day = "Monday", schedule = mondaySchedule)
+
+
+}
+
+data class TimeSlot(
+    val time: String,
+    val staff: List<String>
+)
+
+fun parseDaySchedule(json: JSONObject, day: String): List<TimeSlot> {
+    val dayObject = json.optJSONObject(day) ?: return emptyList()
+    val timeSlots = mutableListOf<TimeSlot>()
+
+    val keys = dayObject.keys()
+    while (keys.hasNext()) {
+        val time = keys.next()
+        val staffArray = dayObject.optJSONArray(time)
+        val staffList = mutableListOf<String>()
+        for (i in 0 until (staffArray?.length() ?: 0)) {
+            staffList.add(staffArray!!.getString(i))
         }
-        items(tableData) { (id, text) ->
-            Row(Modifier.fillMaxWidth()) {
-                TableCell(id.toString(), column1Weight)
-                TableCell(text, column2Weight)
+        timeSlots.add(TimeSlot(time, staffList))
+    }
+
+    return timeSlots.sortedBy { it.time }
+}
+
+@Composable
+fun SingleDayTimetable(day: String, schedule: List<TimeSlot>) {
+    val formatter = DateTimeFormatter.ofPattern("dd/MM/yy")
+    val currentDate = LocalDateTime.now().format(formatter)
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+            text = "$currentDate - ${day.replaceFirstChar { it.uppercase() }}",
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        LazyColumn {
+            items(schedule) { slot ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
+                        .border(1.dp, Color.Gray, shape=RoundedCornerShape(16.dp))
+                        .padding(8.dp)
+                ) {
+                    Text(
+                        text = slot.time,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 8.dp)
+                    )
+                    Column(modifier = Modifier.weight(2f)) {
+                        slot.staff.forEach { staffMember ->
+                            Text(text = "\u2022 $staffMember")
+                        }
+                    }
+                }
             }
         }
     }
