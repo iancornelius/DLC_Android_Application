@@ -31,6 +31,11 @@ import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
+data class TimeSlot(
+    val time: String,
+    val staff: List<String>
+)
+
 suspend fun getSemester(): Int {
     // val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     // val current_date = LocalDateTime.now()
@@ -92,11 +97,6 @@ fun TimetableScreen() {
 
 
 }
-
-data class TimeSlot(
-    val time: String,
-    val staff: List<String>
-)
 
 fun parseDaySchedule(json: JSONObject, day: String): List<TimeSlot> {
     val dayObject = json.optJSONObject(day) ?: return emptyList()

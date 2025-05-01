@@ -9,16 +9,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.createGraph
-import ees.dlc.application.NavigationBar
-import ees.dlc.application.screens.HomeScreen
-import ees.dlc.application.screens.StaffProfilesScreen
-import ees.dlc.application.ui.theme.DLCTheme
-import ees.dlc.application.Screen
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.createGraph
+import ees.dlc.application.screens.HomeScreen
+import ees.dlc.application.screens.StaffProfilesScreen
 import ees.dlc.application.screens.TimetableScreen
+import ees.dlc.application.ui.theme.DLCTheme
 
 
 class MainActivity : ComponentActivity() {

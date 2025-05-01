@@ -17,10 +17,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavController
 
+data class NavigationItem(
+    val title: String,
+    val icon: ImageVector,
+    val route: String
+)
+
 @Composable
-fun NavigationBar(
-    navController: NavController
-) {
+fun NavigationBar(navController: NavController) {
     val selectedNavigationIndex = rememberSaveable {
         mutableIntStateOf(0)
     }
@@ -71,9 +75,3 @@ fun NavigationBar(
         }
     }
 }
-
-data class NavigationItem(
-    val title: String,
-    val icon: ImageVector,
-    val route: String
-)
