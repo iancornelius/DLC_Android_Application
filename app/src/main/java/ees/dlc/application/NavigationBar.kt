@@ -4,10 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -62,13 +59,11 @@ fun NavigationBar(
                 label = {
                     Text(
                         item.title,
-                        color = if (index == selectedNavigationIndex.intValue)
-                            Color.White
-                        else Color.White
+                        color = Color.White
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = colorResource(R.color.white),
+                    selectedIconColor = Color.White,
                     indicatorColor = colorResource(R.color.cov_blue_highlight)
                 )
 

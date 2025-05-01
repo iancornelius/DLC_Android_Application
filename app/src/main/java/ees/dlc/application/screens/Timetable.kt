@@ -134,7 +134,7 @@ fun SingleDayTimetable(day: String, schedule: List<TimeSlot>) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 8.dp)
-                        .border(1.dp, Color.Gray, shape=RoundedCornerShape(16.dp))
+                        .border(1.dp, Color.Gray, shape = RoundedCornerShape(16.dp))
                         .padding(8.dp)
                 ) {
                     Text(

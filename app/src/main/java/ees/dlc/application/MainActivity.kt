@@ -35,15 +35,10 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen() {
-
     val navController = rememberNavController()
-
     Scaffold(
-        modifier = Modifier
-            .fillMaxSize(),
-        bottomBar = { NavigationBar(navController) }
-    ) { innerPadding ->
-
+        modifier = Modifier.fillMaxSize(),
+        bottomBar = { NavigationBar(navController) }) { innerPadding ->
         val graph =
             navController.createGraph(startDestination = Screen.Home.rout) {
                 composable(route = Screen.Home.rout) {
