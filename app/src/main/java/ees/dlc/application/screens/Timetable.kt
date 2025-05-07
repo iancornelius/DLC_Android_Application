@@ -39,7 +39,7 @@ data class TimeSlot(
 suspend fun getSemester(): Int {
     // val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     // val current_date = LocalDateTime.now()
-    val apiUrl = "http://192.168.1.36:5000/api/current-semester/20/01/2025"
+    val apiUrl = "http://10.16.82.7:5000/api/current-semester/20/01/2025"
     return withContext(Dispatchers.IO) {
         val response = JSONObject(API.CallApi(apiUrl, "GET"))
         response.getInt("current-semester")
@@ -49,7 +49,7 @@ suspend fun getSemester(): Int {
 suspend fun getWeek(): Int {
 //    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 //    val current_date = LocalDateTime.now()
-    val apiUrl = "http://192.168.1.36:5000/api/current-week/20/01/2025"
+    val apiUrl = "http://10.16.82.7:5000/api/current-week/20/01/2025"
     return withContext(Dispatchers.IO) {
         val response = JSONObject(API.CallApi(apiUrl, "GET"))
         response.getInt("current-week")
@@ -76,7 +76,7 @@ fun TimetableScreen() {
     LaunchedEffect(week.intValue, semester.intValue) {
         if (week.intValue != -1 && semester.intValue != -1) {
 //            val apiUrl = "http://192.168.1.36:5000/api/timetable/${semester.intValue}/${week.intValue}/${currentDay}"
-            val apiUrl = "http://192.168.1.36:5000/api/timetable/1/6/${currentDay.lowercase()}"
+            val apiUrl = "http://10.16.82.7:5000/api/timetable/1/6/${currentDay.lowercase()}"
             val response = withContext(Dispatchers.IO) {
                 JSONObject(API.CallApi(apiUrl, "GET"))
             }

@@ -35,7 +35,7 @@ data class StaffProfile(
 )
 
 suspend fun getStaffProfiles(): JSONArray {
-    val apiUrl = "http://192.168.1.36:5000/api/staff-list"
+    val apiUrl = "http://10.16.82.7:5000/api/staff-list"
     return withContext(Dispatchers.IO) {
         val response = JSONArray(API.CallApi(apiUrl, "GET"))
         response
